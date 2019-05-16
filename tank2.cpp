@@ -21,7 +21,7 @@
 using namespace std;
 
 const int INF = 200;
-const double time_limit = 0.95;
+const double time_limit = 10.95;
 template <typename T>inline void updmax(T &a,T b){if(b>a)a=b;}
 template <typename T>inline void updmin(T &a,T b){if(b<a)a=b;}
 template <typename T>inline int sgn(T a){
@@ -975,7 +975,7 @@ double value1(TankGame::TankField &field){  //只有这里需要重写
     if(result==me)res += INF;
     //if(field.shoot(me))res += INF/2;
     //if(field.shoot(enemy))res += -INF/2;
-    const double t1=10,t2=0,t3=1,t4=5;
+    const double t1=10,t2=0,t3=6,t4=5;
 
     const double tank_alive = 100, tank_shoot = 0.2;
     if(field.tankShoot(me,0))res-=tank_shoot;
@@ -995,7 +995,7 @@ double value1(TankGame::TankField &field){  //只有这里需要重写
 
     //cout<<dist[0][0]<<' '<<dist[0][1]<<' '<<dist[1][0]<<' '<<dist[1][1]<<endl;
     double u1=min(dist[me][0],dist[me][1]), u2=min(dist[enemy][0],dist[enemy][1]);
-    res-=t1*func(dist[me][0],dist[me][1])*2;
+    res-=t1*func(dist[me][0],dist[me][1]);
     res+=t1*func(dist[enemy][0],dist[enemy][1]);
 
     //res+=evaluate(mp(field.tankX[me][0],field.tanY[me][0]))
@@ -1030,7 +1030,7 @@ struct TwoActions{
 };
 class MyArtificialIdiot1{
 public:
-    const static int search_depth_limit = 2;
+    const static int search_depth_limit = 1;
     static int gen(int k){return rand()%k;}
     double searched_value(TankGame::TankField &field, double (*value)(TankGame::TankField &f), int depth){
         if(depth==0 || (clock()-ticker)/double(CLOCKS_PER_SEC)>time_limit)return value(field);
@@ -1158,7 +1158,7 @@ public:
         TwoActions response;
         for(auto myAction:myValidActions){
             double u=search(field, value, myAction, false);
-            //cout<<myAction<<' '<<u<<endl;
+            cout<<myAction<<' '<<u<<endl;
             if(maxi<u){
                 maxi=u;
                 response=myAction;
@@ -1182,6 +1182,7 @@ int main()
         string data, globaldata;
         TankGame::ReadInput(filein, data, globaldata);
         TankGame::field->DebugPrint();
+        //cout<<value1(*TankGame::field)<<endl;
         TwoActions result = AI.run(*(TankGame::field), value1);
         TankGame::SubmitAndExit(result.action1, result.action2);
 }
